@@ -9,7 +9,7 @@ import java.util.List;
 public class BranchAndBound extends AlgorithmsBase{
 
     public BranchAndBound(Caminhao truck) {
-        super(truck);
+        super(truck, "Branch and Bound Execution");
     }
 
     // METODO PARA RETORNAR OS DESTINOS DE UMA LOJA
@@ -106,7 +106,7 @@ public class BranchAndBound extends AlgorithmsBase{
 
     // metodo para pegar a matriz completa
     public List<List<Integer>> getMatrizCompleta() {
-        return readFile("lojas.txt");
+        return readFile("E:\\GitHub Projects\\paa-trabalho2\\app\\src\\main\\java\\paa\\trabalho2\\Implementation\\lojas.txt");
     }
 
     // METODO PARA GERAR AS COMBINAÇÕES POSSIVEIIS COMEÇANDO A PARTIR DE UMA LOJA
@@ -229,14 +229,16 @@ public class BranchAndBound extends AlgorithmsBase{
 
         BestWay bestWay = this.branchAndBound(mandatoryStores, mainMatrix, best);
 
+        long endTime = System.currentTimeMillis();
+        long totalTime = endTime - startTime;
+        this.setExecutionTimeValue(totalTime);
+
         XYDataset dataset = createDataset(mainMatrix);
         this.graph.getXYPlot().setDataset(0, dataset);
 
         drawBestWay(bestWay, mainMatrix);
 
-        long endTime = System.currentTimeMillis();
-        long totalTime = endTime - startTime;
-        super.executionTime = totalTime;
+
 
         System.out.println("\nTempo total de execucao: " + totalTime + " ms");
 
