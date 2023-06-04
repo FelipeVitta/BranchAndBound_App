@@ -1,72 +1,24 @@
 package paa.trabalho2.Implementation;
 
 
-import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
-import org.jdesktop.swingx.JXGraph;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.annotations.XYLineAnnotation;
-import org.jfree.chart.annotations.XYTextAnnotation;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 import paa.trabalho2.Shared.BestWay;
 import paa.trabalho2.Shared.Caminhao;
 
-import javax.swing.*;
-
-public class ForcaBruta {
-
-    private Caminhao truck;
-    private JPanel jPanel;
-    private JFreeChart graph;
-    private JLabel currentPayloadLabel;
-    private JLabel currentGasConsumeLabel;
-    private JLabel currentPayloadValue;
-    private JLabel currentGasConsumeValue;
-    private ChartPanel chartPanel;
+public class ForcaBruta extends AlgorithmsBase {
 
     public ForcaBruta(Caminhao truck) {
-        this.truck = truck;
-        jPanel = createGUI();
-        graph = createGraph();
-        currentPayloadLabel = new JLabel("Carga atual: ");
-        currentPayloadValue = new JLabel();
-
-        currentGasConsumeLabel = new JLabel("Consumo de gasolina atual: ");
-        currentGasConsumeValue = new JLabel();
-
-        chartPanel = new ChartPanel(graph);
-        chartPanel.setSize(900,900);
-        jPanel.setLayout(new BoxLayout(jPanel, BoxLayout.Y_AXIS));
-        jPanel.add(chartPanel);
-        jPanel.add(currentPayloadLabel);
-        jPanel.add(currentPayloadValue);
-        jPanel.add(currentGasConsumeLabel);
-        jPanel.add(currentGasConsumeValue);
-
+       super(truck);
     }
 
-    public Caminhao getCaminhao() {
-        return truck;
-    }
-
-    public void setCaminhao(Caminhao truck) {
-        this.truck = truck;
-    }
-
-    // METODO PARA LER O "lojas.txt"
+    // METODO PARA LER O "stores.txt"
     public List<List<Integer>> readFile(String path) {
         try {
 
@@ -101,19 +53,19 @@ public class ForcaBruta {
     }
 
     // METODO PARA RETORNAR OS DESTINOS DE UMA LOJA
-    public List<Integer> getDestinos(List<Integer> loja) {
+    public List<Integer> getDestinos(List<Integer> storeList) {
         // Se o tamanho da lista da loja for igual a 3, ela não tem destinos
-        if (loja.size() == 3) {
+        if (storeList.size() == 3) {
             return null;
         }
         // pegando os destinos daquela loja
         int i = 3;
         List<Integer> destinos = new ArrayList<>();
         while (true) {
-            if (loja.size() == i) {
+            if (storeList.size() == i) {
                 break;
             } else {
-                destinos.add(loja.get(i));
+                destinos.add(storeList.get(i));
                 i++;
             }
         }
@@ -122,10 +74,10 @@ public class ForcaBruta {
 
     // METODO PARA RETORNAR AS LOJAS QUE O CAMINHÃO NÃO PODE PASSAR NO MOMENTO PARA
     // NÃO TER QUE PASSAR NOVAMENTE
-    public List<Integer> getLojasWithoutPermissionToGo(List<List<Integer>> lojas) {
+    public List<Integer> getLojasWithoutPermissionToGo(List<List<Integer>> stores) {
         List<Integer> semPermissao = new ArrayList<>();
-        for (List<Integer> loja : lojas) {
-            List<Integer> destinos = getDestinos(loja);
+        for (List<Integer> store : stores) {
+            List<Integer> destinos = getDestinos(store);
             if (destinos != null) {
                 for (Integer lol : destinos) {
                     semPermissao.add(lol);
@@ -137,10 +89,10 @@ public class ForcaBruta {
 
     // METODO PARA DETERMINAR SE O CAMINHÃO PODE CARREGAR OS ITENS DA LOJA
     // ESPECIFICADA
-    public boolean canTheTruckCarryMoreItems(List<List<Integer>> matriz, Integer loja, Caminhao truck) {
-        List<Integer> novasCargas = getDestinos(matriz.get(loja));
+    public boolean canTheTruckCarryMoreItems(List<List<Integer>> matriz, Integer store, Caminhao truck) {
+        List<Integer> novasCargas = getDestinos(matriz.get(store));
         int tam = truck.getCargaAtual().size();
-        if (truck.getCargaAtual().contains(loja)) {
+        if (truck.getCargaAtual().contains(store)) {
             tam = tam - 1;
         }
         if (novasCargas != null) {
@@ -154,9 +106,9 @@ public class ForcaBruta {
     }
 
     // METODO PARA RETORNAR SE O CAMINHAO PODE IR PARA A LOJA ESPECIFICADA
-    public boolean canIGoToThisLoja(List<List<Integer>> matriz, Integer loja, Caminhao truck) {
-        return !getLojasWithoutPermissionToGo(matriz).contains(loja)
-                && canTheTruckCarryMoreItems(matriz, loja, truck);
+    public boolean canIGoToThisLoja(List<List<Integer>> matriz, Integer store, Caminhao truck) {
+        return !getLojasWithoutPermissionToGo(matriz).contains(store)
+                && canTheTruckCarryMoreItems(matriz, store, truck);
     }
 
     // METODO PARA MUDAR A MATRIZ PARA SABER QUAIS LOJAS AGORA PODEM SER ACESSADAS E
@@ -178,7 +130,7 @@ public class ForcaBruta {
     }
 
     // METODO PARA RETORNAR AS LOJAS QUE O CAMINHAO PRECISA PASSAR
-    public List<Integer> mandatoryStorers(List<List<Integer>> matrizCompleta) {
+    public List<Integer> mandatoryStores(List<List<Integer>> matrizCompleta) {
         List<Integer> lojasParaPassar = new ArrayList<>();
         List<Integer> destinos = getLojasWithoutPermissionToGo(matrizCompleta);
         for (int i = 1; i < matrizCompleta.size(); i++) {
@@ -238,9 +190,9 @@ public class ForcaBruta {
     public void tryCombinations(List<List<Integer>> copiaMatrizCompleta, List<Integer> combinacao,
                                 Caminhao truck, BestWay bestWay) {
         List<List<Integer>> copia = fazerCopiaMatriz(copiaMatrizCompleta);
-        for (Integer loja : combinacao) {
-            if (canIGoToThisLoja(copiaMatrizCompleta, loja, truck)) {
-                copiaMatrizCompleta = changeMatriz(copiaMatrizCompleta, loja, truck);
+        for (Integer store : combinacao) {
+            if (canIGoToThisLoja(copiaMatrizCompleta, store, truck)) {
+                copiaMatrizCompleta = changeMatriz(copiaMatrizCompleta, store, truck);
             } else {
                 truck.setCombustivelGastoAtual(0.0f);
                 truck.setCargaAtual(new ArrayList<>());
@@ -259,13 +211,13 @@ public class ForcaBruta {
         int i = 0;
         float[] currentCoordinates = { copiaMatrizCompleta.get(0).get(1), copiaMatrizCompleta.get(0).get(2) };
         float[] coordinatesToGo = { 0, 0 };
-        for (Integer loja : combinacao) {
+        for (Integer store : combinacao) {
 
-            coordinatesToGo[0] = copiaMatrizCompleta.get(loja).get(1);
-            coordinatesToGo[1] = copiaMatrizCompleta.get(loja).get(2);
+            coordinatesToGo[0] = copiaMatrizCompleta.get(store).get(1);
+            coordinatesToGo[1] = copiaMatrizCompleta.get(store).get(2);
             calcularDistancias(currentCoordinates[0], currentCoordinates[1], coordinatesToGo[0], coordinatesToGo[1],
                     truck);
-            copiaMatrizCompleta = changeMatriz(copiaMatrizCompleta, loja, truck);
+            copiaMatrizCompleta = changeMatriz(copiaMatrizCompleta, store, truck);
             currentCoordinates[0] = coordinatesToGo[0];
             currentCoordinates[1] = coordinatesToGo[1];
 
@@ -299,97 +251,9 @@ public class ForcaBruta {
         truck.setCombustivelGastoAtual(truck.getCombustivelGastoAtual() + litros);
     }
 
-    private JPanel createGUI(){
-        JFrame frame = new JFrame("Exemplo de Interface Gráfica");
-
-        // Cria um painel JPanel
-        JPanel panel = new JPanel();
-
-        // Adiciona o painel à janela JFrame
-        frame.getContentPane().add(panel);
-
-        // Configura o tamanho da janela
-        frame.setSize(1200, 1000);
-
-        // Define a ação padrão ao fechar a janela
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // Exibe a janela
-        frame.setVisible(true);
-
-        return panel;
-    }
-
-    private JFreeChart createGraph(){
-        JFreeChart chart = ChartFactory.createScatterPlot(
-                "Posicao das Lojas",
-                "Eixo X",
-                "Eixo Y",
-                null,
-                PlotOrientation.VERTICAL,
-                true,
-                true,
-                false
-        );
-
-        return chart;
-    }
-
-    private XYDataset createDataset(List<List<Integer>> storesInfo) {
-        // Cria uma série de pontos
-        XYSeries series = new XYSeries("Lojas");
-
-        for (List<Integer> storeInfo : storesInfo){
-            String label = "Loja " + storeInfo.get(0);
-            series.add(storeInfo.get(1), storeInfo.get(2));
-
-            XYTextAnnotation textAnnotation = new XYTextAnnotation(label, storeInfo.get(1),storeInfo.get(2));
-            this.graph.getXYPlot().addAnnotation(textAnnotation);
-        }
-
-        // Cria um conjunto de dados XY e adiciona a série
-        XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(series);
-
-
-
-        return dataset;
-    }
-
-    private void drawBestWay(BestWay bestWay, List<List<Integer>> mainMatrix){
-
-        List<Integer> bestWayIndex = bestWay.getCaminho();
-        List<XYLineAnnotation> lineAnnotations = new ArrayList<>();
-
-        for(int currentIndex = 0; currentIndex < bestWayIndex.size() - 1; currentIndex++){
-
-            int startX = mainMatrix.get(bestWayIndex.get(currentIndex)).get(1);
-            int startY = mainMatrix.get(bestWayIndex.get(currentIndex)).get(2);
-
-            int endX = mainMatrix.get(bestWayIndex.get(currentIndex + 1)).get(1);
-            int endY = mainMatrix.get(bestWayIndex.get(currentIndex + 1)).get(2);
-
-            XYLineAnnotation lineAnnotation = new XYLineAnnotation(startX, startY, endX, endY,
-                    new BasicStroke(1.5f), Color.BLACK);
-
-            lineAnnotations.add(lineAnnotation);
-
-            // Nessa parte aqui eu preciso pegar o valor atual do combustivel e o que o caminhão está levando
-            this.currentPayloadValue.setText(Integer.toString(currentIndex));
-            this.currentGasConsumeValue.setText("Troquei para o id" + currentIndex);
-            this.graph.getXYPlot().addAnnotation(lineAnnotation);
-            this.graph.fireChartChanged();
-          try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
     public void executeAlgorithm(){
-        List<List<Integer>> mainMatrix = this.readFile("E:\\GitHub Projects\\paa-trabalho2\\app\\src\\main\\java\\paa\\trabalho2\\Implementation\\lojas.txt");
-        List<Integer> mandatoryStores = this.mandatoryStorers(mainMatrix);
+        List<List<Integer>> mainMatrix = this.readFile("E:\\GitHub Projects\\paa-trabalho2\\app\\src\\main\\java\\paa\\trabalho2\\Implementation\\stores.txt");
+        List<Integer> mandatoryStores = this.mandatoryStores(mainMatrix);
         BestWay bestWay = new BestWay();
 
         long startTime = System.currentTimeMillis();
@@ -398,6 +262,8 @@ public class ForcaBruta {
             truck.setCargaAtual(new ArrayList<>());
             this.generateCombinations(mandatoryStores, store, mainMatrix, truck, bestWay);
         }
+
+        long endTime = System.currentTimeMillis();
 
         XYDataset dataset = createDataset(mainMatrix);
         this.graph.getXYPlot().setDataset(0, dataset);
@@ -408,7 +274,6 @@ public class ForcaBruta {
 
         drawBestWay(bestWay, mainMatrix);
 
-        long endTime = System.currentTimeMillis();
         long totalTime = endTime - startTime;
         System.out.println("\nTempo total de execucao: " + totalTime + " ms");
     }
