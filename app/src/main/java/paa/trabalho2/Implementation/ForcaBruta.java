@@ -272,9 +272,11 @@ public class ForcaBruta extends AlgorithmsBase {
         bestWay.getCaminho().add(0);
         System.out.println(bestWay);
 
+        long totalTime = endTime - startTime;
+        super.executionTime = totalTime;
         drawBestWay(bestWay, mainMatrix);
 
-        long totalTime = endTime - startTime;
+
         System.out.println("\nTempo total de execucao: " + totalTime + " ms");
     }
 }

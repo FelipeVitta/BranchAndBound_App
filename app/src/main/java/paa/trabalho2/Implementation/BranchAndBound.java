@@ -236,6 +236,7 @@ public class BranchAndBound extends AlgorithmsBase{
 
         long endTime = System.currentTimeMillis();
         long totalTime = endTime - startTime;
+        super.executionTime = totalTime;
 
         System.out.println("\nTempo total de execucao: " + totalTime + " ms");
 

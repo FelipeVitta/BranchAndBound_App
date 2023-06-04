@@ -26,9 +26,13 @@ public class AlgorithmsBase {
     protected JFreeChart graph;
     protected JLabel currentPayloadLabel;
     protected JLabel currentGasConsumeLabel;
+    protected JLabel executionTimeLabel;
     protected JLabel currentPayloadValue;
     protected JLabel currentGasConsumeValue;
+    protected JLabel executionTimeValue;
     protected ChartPanel chartPanel;
+
+    protected long executionTime;
 
     public AlgorithmsBase(Caminhao truck){
         this.truck = truck;
@@ -40,6 +44,9 @@ public class AlgorithmsBase {
         currentGasConsumeLabel = new JLabel("Consumo de gasolina atual: ");
         currentGasConsumeValue = new JLabel();
 
+        executionTimeLabel = new JLabel("Tempo de execução: ");
+        executionTimeValue = new JLabel(Long.toString(executionTime) + "ms");
+
         chartPanel = new ChartPanel(graph);
         chartPanel.setSize(900,900);
         jPanel.setLayout(new BoxLayout(jPanel, BoxLayout.Y_AXIS));
@@ -48,6 +55,8 @@ public class AlgorithmsBase {
         jPanel.add(currentPayloadValue);
         jPanel.add(currentGasConsumeLabel);
         jPanel.add(currentGasConsumeValue);
+        jPanel.add(executionTimeLabel);
+        jPanel.add(executionTimeValue);
     }
 
     public Caminhao getTruck() {
