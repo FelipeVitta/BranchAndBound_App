@@ -1,11 +1,11 @@
 package paa.trabalho2.Implementation;
 
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jfree.data.xy.XYDataset;
@@ -15,7 +15,7 @@ import paa.trabalho2.Shared.Caminhao;
 public class ForcaBruta extends AlgorithmsBase {
 
     public ForcaBruta(Caminhao truck) {
-       super(truck, "Brute Force Execution");
+        super(truck, "Brute Force Execution");
     }
 
     // METODO PARA LER O "stores.txt"
@@ -144,7 +144,7 @@ public class ForcaBruta extends AlgorithmsBase {
     // METODO PARA GERAR AS COMBINAÇÕES POSSÍVEIS COMEÇANDO A PARTIR DE UMA LOJA
     // (PRINCIPAL)
     public void generateCombinations(List<Integer> valores, int numeroInicial, List<List<Integer>> matrizCompleta,
-                                     Caminhao truck, BestWay bestWay) {
+            Caminhao truck, BestWay bestWay) {
         for (int i = 0; i < valores.size(); i++) {
             if (valores.get(i) == numeroInicial) {
                 List<Integer> caminho = new ArrayList<>();
@@ -167,7 +167,7 @@ public class ForcaBruta extends AlgorithmsBase {
 
     // METODO AUXILIAR DO generateCombinations PARA GERAR CAMINHOS
     public void gerarCaminhos(List<Integer> valores, int numeroInicial, int indice, List<Integer> caminho,
-                              List<List<Integer>> matrizCompleta, Caminhao truck, BestWay bestWay) {
+            List<List<Integer>> matrizCompleta, Caminhao truck, BestWay bestWay) {
         if (caminho.size() == valores.size()) {
             // fazendo copia da matriz Original
             List<List<Integer>> copiaMatrizCompleta = fazerCopiaMatriz(matrizCompleta);
@@ -188,7 +188,7 @@ public class ForcaBruta extends AlgorithmsBase {
 
     // METODO DE FORÇA BRUTA PARA TESTAR TODAS AS COMBINAÇÕES
     public void tryCombinations(List<List<Integer>> copiaMatrizCompleta, List<Integer> combinacao,
-                                Caminhao truck, BestWay bestWay) {
+            Caminhao truck, BestWay bestWay) {
         List<List<Integer>> copia = fazerCopiaMatriz(copiaMatrizCompleta);
         for (Integer store : combinacao) {
             if (canIGoToThisLoja(copiaMatrizCompleta, store, truck)) {
@@ -208,7 +208,9 @@ public class ForcaBruta extends AlgorithmsBase {
     // METODO PARA CALCULAR A QUANTIDADE DE GASOLINA GASTA EM CADA TRAJETO VALIDO
     public void calculaGasosa(List<Integer> combinacao, List<List<Integer>> copiaMatrizCompleta, Caminhao truck,
             BestWay way) {
-        int i = 0;
+        List<Float> combustivel = new ArrayList<>(Arrays.asList(0.0f));
+        List<List<Integer>> cargas = new ArrayList<>();
+        cargas.add(new ArrayList<>());
         float[] currentCoordinates = { copiaMatrizCompleta.get(0).get(1), copiaMatrizCompleta.get(0).get(2) };
         float[] coordinatesToGo = { 0, 0 };
         for (Integer store : combinacao) {
@@ -218,17 +220,24 @@ public class ForcaBruta extends AlgorithmsBase {
             calcularDistancias(currentCoordinates[0], currentCoordinates[1], coordinatesToGo[0], coordinatesToGo[1],
                     truck);
             copiaMatrizCompleta = changeMatriz(copiaMatrizCompleta, store, truck);
+            combustivel.add(this.truck.getCombustivelGastoAtual());
+            cargas.add(new ArrayList<>(this.truck.getCargaAtual()));
             currentCoordinates[0] = coordinatesToGo[0];
             currentCoordinates[1] = coordinatesToGo[1];
 
         }
         // Calculando a volta para a origem
         calcularDistancias(currentCoordinates[0], currentCoordinates[1], copiaMatrizCompleta.get(0).get(1),
-                copiaMatrizCompleta.get(i).get(2), truck);
+                copiaMatrizCompleta.get(0).get(2), truck);
+
+        combustivel.add(this.truck.getCombustivelGastoAtual());
+        cargas.add(new ArrayList<>(this.truck.getCargaAtual()));
 
         if (truck.getCombustivelGastoAtual() < way.getCombustivelGasto()) {
             way.setCombustivelGasto(truck.getCombustivelGastoAtual());
-            way.setCaminho(combinacao);
+            way.setCaminho(new ArrayList<>(combinacao));
+            way.setCargas(new ArrayList<>(cargas));
+            way.setCombustiveis(new ArrayList<>(combustivel));
         }
         // System.out.println("Combustivel Gasto = " +
         // truck.getCombustivelGastoAtual());
@@ -251,8 +260,9 @@ public class ForcaBruta extends AlgorithmsBase {
         truck.setCombustivelGastoAtual(truck.getCombustivelGastoAtual() + litros);
     }
 
-    public void executeAlgorithm(){
-        List<List<Integer>> mainMatrix = this.readFile("E:\\GitHub Projects\\paa-trabalho2\\app\\src\\main\\java\\paa\\trabalho2\\Implementation\\lojas.txt");
+    public void executeAlgorithm() {
+        List<List<Integer>> mainMatrix = this.readFile(
+                "E:\\GitHub Projects\\paa-trabalho2\\app\\src\\main\\java\\paa\\trabalho2\\Implementation\\lojas.txt");
         List<Integer> mandatoryStores = this.mandatoryStores(mainMatrix);
         BestWay bestWay = new BestWay();
 
@@ -262,7 +272,6 @@ public class ForcaBruta extends AlgorithmsBase {
             truck.setCargaAtual(new ArrayList<>());
             this.generateCombinations(mandatoryStores, store, mainMatrix, truck, bestWay);
         }
-
 
         long endTime = System.currentTimeMillis();
         long totalTime = endTime - startTime;
@@ -274,11 +283,11 @@ public class ForcaBruta extends AlgorithmsBase {
         bestWay.getCaminho().add(0, 0);
         bestWay.getCaminho().add(0);
         System.out.println(bestWay);
+        System.out.println("Cargas = " + bestWay.getCargas());
+        System.out.println("Combustiveis = " + bestWay.getCombustiveis());
 
         drawBestWay(bestWay, mainMatrix);
-
 
         System.out.println("\nTempo total de execucao: " + totalTime + " ms");
     }
 }
-

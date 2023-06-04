@@ -7,7 +7,8 @@ public class BestWay {
 
     private List<Integer> caminho;
     private float combustivelGasto;
-    private int i = 0;
+    private List<List<Integer>> cargas;
+    private List<Float> combustiveis;
 
     public BestWay(List<Integer> caminho, float combustivelGasto) {
         this.caminho = caminho;
@@ -17,10 +18,16 @@ public class BestWay {
     public BestWay() {
         this.combustivelGasto = 100000.0f;
         this.caminho = new ArrayList<>(0);
+        this.cargas = new ArrayList<>();
+        this.combustiveis = new ArrayList<>();
     }
 
-    public int getI() {
-        return i;
+    public List<Float> getCombustiveis() {
+        return combustiveis;
+    }
+
+    public void setCombustiveis(List<Float> combustiveis) {
+        this.combustiveis = combustiveis;
     }
 
     public List<Integer> getCaminho() {
@@ -28,7 +35,6 @@ public class BestWay {
     }
 
     public void setCaminho(List<Integer> caminho) {
-        i++;
         this.caminho = caminho;
     }
 
@@ -43,6 +49,14 @@ public class BestWay {
     @Override
     public String toString() {
         return "Melhor caminho = " + caminho + "\nCombustivel Gasto = " + combustivelGasto;
+    }
+
+    public List<List<Integer>> getCargas() {
+        return cargas;
+    }
+
+    public void setCargas(List<List<Integer>> cargas) {
+        this.cargas = cargas;
     }
 
 }

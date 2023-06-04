@@ -9,7 +9,7 @@ public class Caminhao {
     private List<Integer> cargaAtual = new ArrayList<>();
     private float combustivelGastoAtual;
 
-    public Caminhao() {
+    public Caminhao(){
     }
 
     public Caminhao(int cargaPossivel) {

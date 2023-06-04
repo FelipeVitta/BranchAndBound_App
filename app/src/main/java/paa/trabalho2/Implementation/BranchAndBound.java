@@ -4,9 +4,10 @@ import org.jfree.data.xy.XYDataset;
 import paa.trabalho2.Shared.BestWay;
 import paa.trabalho2.Shared.Caminhao;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class BranchAndBound extends AlgorithmsBase{
+public class BranchAndBound extends AlgorithmsBase {
 
     public BranchAndBound(Caminhao truck) {
         super(truck, "Branch and Bound Execution");
@@ -106,7 +107,8 @@ public class BranchAndBound extends AlgorithmsBase{
 
     // metodo para pegar a matriz completa
     public List<List<Integer>> getMatrizCompleta() {
-        return readFile("E:\\GitHub Projects\\paa-trabalho2\\app\\src\\main\\java\\paa\\trabalho2\\Implementation\\lojas.txt");
+        return readFile(
+                "E:\\GitHub Projects\\paa-trabalho2\\app\\src\\main\\java\\paa\\trabalho2\\Implementation\\lojas.txt");
     }
 
     // METODO PARA GERAR AS COMBINAÇÕES POSSIVEIIS COMEÇANDO A PARTIR DE UMA LOJA
@@ -126,7 +128,7 @@ public class BranchAndBound extends AlgorithmsBase{
 
     // METODO PRINCIPAL DE BRANCH AND BOUND RESPONSAVEL PELAS PODAS
     public void gerarCaminhos(List<Integer> valores, int indice, List<Integer> caminho,
-                              List<List<Integer>> matrizCompleta, BestWay bestWay) {
+            List<List<Integer>> matrizCompleta, BestWay bestWay) {
 
         if (caminho.size() == valores.size()) {
             List<List<Integer>> copiaMatrizCompleta = getMatrizCompleta();
@@ -161,7 +163,9 @@ public class BranchAndBound extends AlgorithmsBase{
 
     // METODO PARA CALCULAR A QUANTIDADE DE GASOLINA GASTA EM CADA TRAJETO VALIDO
     public void calculaGasosa(List<Integer> combinacao, List<List<Integer>> copiaMatrizCompleta, BestWay way) {
-        int i = 0;
+        List<Float> combustivel = new ArrayList<>(Arrays.asList(0.0f));
+        List<List<Integer>> cargas = new ArrayList<>();
+        cargas.add(new ArrayList<>());
         float[] currentCoordinates = { copiaMatrizCompleta.get(0).get(1), copiaMatrizCompleta.get(0).get(2) };
         float[] coordinatesToGo = { 0, 0 };
         for (Integer loja : combinacao) {
@@ -169,17 +173,24 @@ public class BranchAndBound extends AlgorithmsBase{
             coordinatesToGo[1] = copiaMatrizCompleta.get(loja).get(2);
             calcularDistancias(currentCoordinates[0], currentCoordinates[1], coordinatesToGo[0], coordinatesToGo[1]);
             copiaMatrizCompleta = changeMatriz(copiaMatrizCompleta, loja); // atualizando a carga do caminhao
+            combustivel.add(this.truck.getCombustivelGastoAtual());
+            cargas.add(new ArrayList<>(this.truck.getCargaAtual()));
             currentCoordinates[0] = coordinatesToGo[0];
             currentCoordinates[1] = coordinatesToGo[1];
 
         }
         // Calculando a volta para a origem
         calcularDistancias(currentCoordinates[0], currentCoordinates[1], copiaMatrizCompleta.get(0).get(1),
-                copiaMatrizCompleta.get(i).get(2));
+                copiaMatrizCompleta.get(0).get(2));
+
+        combustivel.add(this.truck.getCombustivelGastoAtual());
+        cargas.add(new ArrayList<>(this.truck.getCargaAtual()));
+
         if (this.truck.getCombustivelGastoAtual() < way.getCombustivelGasto()) {
             way.setCombustivelGasto(this.truck.getCombustivelGastoAtual());
-            List<Integer> melhorCaminho = new ArrayList<>(combinacao);
-            way.setCaminho(melhorCaminho);
+            way.setCaminho(new ArrayList<>(combinacao));
+            way.setCargas(new ArrayList<>(cargas));
+            way.setCombustiveis(new ArrayList<>(combustivel));
         }
         this.truck.setCargaAtual(new ArrayList<>());
         this.truck.setCombustivelGastoAtual(0.0f);
@@ -205,7 +216,8 @@ public class BranchAndBound extends AlgorithmsBase{
         List<Integer> beginLojas = new ArrayList<>();
         for (Integer loja : lojasToPass) {
             if (!lojasCantGo.contains(loja)) {
-                beginLojas.add(loja);
+                if (canIGoToThisLoja(matrizPrincipal, loja))
+                    beginLojas.add(loja);
             }
         }
         for (Integer loja : beginLojas) {
@@ -216,12 +228,18 @@ public class BranchAndBound extends AlgorithmsBase{
         bestWay.getCaminho().add(0, 0);
         bestWay.getCaminho().add(0);
 
+        System.out.println("Melhor caminho = " + bestWay.getCaminho());
+        System.out.println("Combustivel gasto = " + bestWay.getCombustivelGasto());
+        System.out.println("Cargas = " + bestWay.getCargas());
+        System.out.println("Combustiveis = " + bestWay.getCombustiveis());
+
         return bestWay;
 
     }
 
     public void executeAlgorithm() {
-        List<List<Integer>> mainMatrix = this.readFile("E:\\GitHub Projects\\paa-trabalho2\\app\\src\\main\\java\\paa\\trabalho2\\Implementation\\lojas.txt");
+        List<List<Integer>> mainMatrix = this.readFile(
+                "E:\\GitHub Projects\\paa-trabalho2\\app\\src\\main\\java\\paa\\trabalho2\\Implementation\\lojas.txt");
         List<Integer> mandatoryStores = this.mandatoryStores(mainMatrix);
         BestWay best = new BestWay();
 
@@ -238,11 +256,8 @@ public class BranchAndBound extends AlgorithmsBase{
 
         drawBestWay(bestWay, mainMatrix);
 
-
-
         System.out.println("\nTempo total de execucao: " + totalTime + " ms");
 
     }
 
 }
-
