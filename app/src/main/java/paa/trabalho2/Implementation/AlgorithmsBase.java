@@ -146,8 +146,8 @@ public class AlgorithmsBase {
             lineAnnotations.add(lineAnnotation);
 
             // Nessa parte aqui eu preciso pegar o valor atual do combustivel e o que o caminhão está levando
-            this.currentPayloadValue.setText(Integer.toString(currentIndex));
-            this.currentGasConsumeValue.setText("Troquei para o id" + currentIndex);
+            this.currentPayloadValue.setText(bestWay.getCargasAsStringInIndex(currentIndex + 1));
+            this.currentGasConsumeValue.setText(Float.toString(bestWay.getCombustiveis().get(currentIndex + 1)));
             this.graph.getXYPlot().addAnnotation(lineAnnotation);
             this.graph.fireChartChanged();
             try {

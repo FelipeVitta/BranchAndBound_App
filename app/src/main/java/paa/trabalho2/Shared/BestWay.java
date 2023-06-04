@@ -1,7 +1,10 @@
 package paa.trabalho2.Shared;
 
+import org.jfree.util.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BestWay {
 
@@ -57,6 +60,10 @@ public class BestWay {
 
     public void setCargas(List<List<Integer>> cargas) {
         this.cargas = cargas;
+    }
+
+    public String getCargasAsStringInIndex(int index){
+        return this.cargas.get(index).stream().map(Object::toString).collect(Collectors.joining(", "));
     }
 
 }
