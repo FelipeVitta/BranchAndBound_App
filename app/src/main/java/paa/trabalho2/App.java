@@ -1,15 +1,12 @@
 package paa.trabalho2;
 
-import javax.swing.*;
-
-import org.jdesktop.swingx.JXGraph;
+import paa.trabalho2.Implementation.BranchAndBound;
 import paa.trabalho2.Implementation.ForcaBruta;
 import paa.trabalho2.Shared.Caminhao;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
 
 public class App {
     public static void main(String[] args) {
@@ -25,24 +22,19 @@ public class App {
         JTextField textField = new JTextField(10);
 
         // Cria um botão JButton
-        JButton button = new JButton("OK");
+        JButton buttonBruteForce = new JButton("Brute Force");
+        JButton buttonBranchBound = new JButton("Branch and Bound");
 
         // Cria um CountDownLatch para sincronizar a execução
-        CountDownLatch latch = new CountDownLatch(1);
+        Semaphore semaphore = new Semaphore(1);
 
-        // Adiciona um ActionListener ao botão
-        button.addActionListener(e -> {
-            // Obtém o valor do campo de texto
-            String input = textField.getText();
-            caminhao.setCargaPossivel(Integer.parseInt(input));
-
-            // Libera a execução
-            latch.countDown();
-        });
+        // Array para armazenar o botão clicado
+        final String[] clickedButton = {""};
 
         panel.add(label);
         panel.add(textField);
-        panel.add(button);
+        panel.add(buttonBruteForce);
+        panel.add(buttonBranchBound);
 
         // Adiciona o painel à janela JFrame
         frame.getContentPane().add(panel);
@@ -56,14 +48,51 @@ public class App {
         // Exibe a janela
         frame.setVisible(true);
 
+        // ActionListener para o botão "Brute Force"
+        buttonBruteForce.addActionListener(e -> {
+            // Obtém o valor do campo de texto
+            String input = textField.getText();
+            caminhao.setCargaPossivel(Integer.parseInt(input));
+
+            // Armazena o botão clicado
+            clickedButton[0] = "Brute Force";
+
+            // Libera a execução
+            semaphore.release();
+        });
+
+        // ActionListener para o botão "Branch and Bound"
+        buttonBranchBound.addActionListener(e -> {
+            // Obtém o valor do campo de texto
+            String input = textField.getText();
+            caminhao.setCargaPossivel(Integer.parseInt(input));
+
+            // Armazena o botão clicado
+            clickedButton[0] = "Branch and Bound";
+
+            // Libera a execução
+            semaphore.release();
+        });
+
         try {
-            // Espera até que o usuário insira um valor e pressione o botão "OK"
-            latch.await();
+            while (true){
+                // Espera até que o usuário insira um valor e pressione o botão
+                semaphore.acquire();
+                // Executa o algoritmo com base no botão clicado
+                if (clickedButton[0].equals("Brute Force")) {
+                    ForcaBruta forcaBruta = new ForcaBruta(caminhao);
+                    forcaBruta.executeAlgorithm();
+                } else if (clickedButton[0].equals("Branch and Bound")) {
+                    BranchAndBound branchAndBound = new BranchAndBound(caminhao);
+                    branchAndBound.executeAlgorithm();
+                }
+
+                frame.invalidate();
+                frame.repaint();
+            }
+
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
-
-        ForcaBruta forcaBruta = new ForcaBruta(caminhao);
-        forcaBruta.executeAlgorithm();
     }
 }

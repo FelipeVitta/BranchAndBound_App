@@ -31,12 +31,11 @@ public class AlgorithmsBase {
     protected JLabel currentGasConsumeValue;
     protected JLabel executionTimeValue;
     protected ChartPanel chartPanel;
-
     protected long executionTime;
 
-    public AlgorithmsBase(Caminhao truck){
+    public AlgorithmsBase(Caminhao truck, String jFrameTitle){
         this.truck = truck;
-        jPanel = createGUI();
+        jPanel = createGUI(jFrameTitle);
         graph = createGraph();
         currentPayloadLabel = new JLabel("Carga atual: ");
         currentPayloadValue = new JLabel();
@@ -44,8 +43,8 @@ public class AlgorithmsBase {
         currentGasConsumeLabel = new JLabel("Consumo de gasolina atual: ");
         currentGasConsumeValue = new JLabel();
 
-        executionTimeLabel = new JLabel("Tempo de execução: ");
-        executionTimeValue = new JLabel(Long.toString(executionTime) + "ms");
+        executionTimeLabel = new JLabel("Execution time: ");
+        executionTimeValue = new JLabel();
 
         chartPanel = new ChartPanel(graph);
         chartPanel.setSize(900,900);
@@ -59,6 +58,10 @@ public class AlgorithmsBase {
         jPanel.add(executionTimeValue);
     }
 
+    protected void setExecutionTimeValue(long executionTime){
+        this.executionTimeValue.setText((Long.toString(executionTime)));
+    }
+
     public Caminhao getTruck() {
         return truck;
     }
@@ -67,8 +70,8 @@ public class AlgorithmsBase {
         this.truck = truck;
     }
 
-    protected JPanel createGUI(){
-        JFrame frame = new JFrame("Exemplo de Interface Gráfica");
+    protected JPanel createGUI(String jFrameTitle){
+        JFrame frame = new JFrame(jFrameTitle);
 
         // Cria um painel JPanel
         JPanel panel = new JPanel();
@@ -80,7 +83,7 @@ public class AlgorithmsBase {
         frame.setSize(1200, 1000);
 
         // Define a ação padrão ao fechar a janela
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         // Exibe a janela
         frame.setVisible(true);

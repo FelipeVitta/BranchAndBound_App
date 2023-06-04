@@ -15,7 +15,7 @@ import paa.trabalho2.Shared.Caminhao;
 public class ForcaBruta extends AlgorithmsBase {
 
     public ForcaBruta(Caminhao truck) {
-       super(truck);
+       super(truck, "Brute Force Execution");
     }
 
     // METODO PARA LER O "stores.txt"
@@ -252,7 +252,7 @@ public class ForcaBruta extends AlgorithmsBase {
     }
 
     public void executeAlgorithm(){
-        List<List<Integer>> mainMatrix = this.readFile("E:\\GitHub Projects\\paa-trabalho2\\app\\src\\main\\java\\paa\\trabalho2\\Implementation\\stores.txt");
+        List<List<Integer>> mainMatrix = this.readFile("E:\\GitHub Projects\\paa-trabalho2\\app\\src\\main\\java\\paa\\trabalho2\\Implementation\\lojas.txt");
         List<Integer> mandatoryStores = this.mandatoryStores(mainMatrix);
         BestWay bestWay = new BestWay();
 
@@ -263,7 +263,10 @@ public class ForcaBruta extends AlgorithmsBase {
             this.generateCombinations(mandatoryStores, store, mainMatrix, truck, bestWay);
         }
 
+
         long endTime = System.currentTimeMillis();
+        long totalTime = endTime - startTime;
+        this.setExecutionTimeValue(totalTime);
 
         XYDataset dataset = createDataset(mainMatrix);
         this.graph.getXYPlot().setDataset(0, dataset);
@@ -272,8 +275,6 @@ public class ForcaBruta extends AlgorithmsBase {
         bestWay.getCaminho().add(0);
         System.out.println(bestWay);
 
-        long totalTime = endTime - startTime;
-        super.executionTime = totalTime;
         drawBestWay(bestWay, mainMatrix);
 
 
