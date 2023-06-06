@@ -22,6 +22,7 @@ import java.util.List;
 
 public class AlgorithmsBase {
     protected Caminhao truck;
+    protected Float lowerBound;
     protected JPanel jPanel;
     protected JFreeChart graph;
     protected JLabel currentPayloadLabel;

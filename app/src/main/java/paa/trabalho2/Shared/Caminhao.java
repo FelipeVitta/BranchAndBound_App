@@ -8,8 +8,26 @@ public class Caminhao {
     private int cargaPossivel;
     private List<Integer> cargaAtual = new ArrayList<>();
     private float combustivelGastoAtual;
+    private List<List<Integer>> cargas = new ArrayList<>();
+    private List<Float> combustiveis = new ArrayList<>();
 
-    public Caminhao(){
+    public Caminhao() {
+    }
+
+    public List<List<Integer>> getCargas() {
+        return cargas;
+    }
+
+    public void setCargas(List<List<Integer>> cargas) {
+        this.cargas = cargas;
+    }
+
+    public List<Float> getCombustiveis() {
+        return combustiveis;
+    }
+
+    public void setCombustiveis(List<Float> combustiveis) {
+        this.combustiveis = combustiveis;
     }
 
     public Caminhao(int cargaPossivel) {

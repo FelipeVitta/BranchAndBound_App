@@ -262,7 +262,7 @@ public class ForcaBruta extends AlgorithmsBase {
 
     public void executeAlgorithm() {
         List<List<Integer>> mainMatrix = this.readFile(
-                "E:\\GitHub Projects\\paa-trabalho2\\app\\src\\main\\java\\paa\\trabalho2\\Implementation\\lojas.txt");
+                "F:\\VSCODE\\dantas-certo\\app\\src\\main\\java\\paa\\trabalho2\\Implementation\\lojas.txt");
         List<Integer> mandatoryStores = this.mandatoryStores(mainMatrix);
         BestWay bestWay = new BestWay();
 

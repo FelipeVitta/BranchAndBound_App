@@ -5,7 +5,6 @@ import paa.trabalho2.Implementation.ForcaBruta;
 import paa.trabalho2.Shared.Caminhao;
 
 import javax.swing.*;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
 
 public class App {
