@@ -66,7 +66,8 @@ public class BranchAndBound extends AlgorithmsBase {
                 && canTheTruckCarryMoreItems(matriz, loja);
     }
 
-    // METODO PARA MUDAR O CONTEXTO DA MATRIZ, ENCHER A CARGA DO CAMINHÃO COM OS NOVOS PRODUTOS E ATUALIZAR O ARRAY DE
+    // METODO PARA MUDAR O CONTEXTO DA MATRIZ, ENCHER A CARGA DO CAMINHÃO COM OS
+    // NOVOS PRODUTOS E ATUALIZAR O ARRAY DE
     // CARGAS DO CAMINHAO
     public List<List<Integer>> changeMatrix(List<List<Integer>> matriz, Integer passei) {
         int tamMatriz = matriz.get(passei).size();
@@ -134,7 +135,7 @@ public class BranchAndBound extends AlgorithmsBase {
 
     }
 
-    // METODO DO CALCULO DA HEURISTICA DO LOWER BOUND
+    // METODO DO CALCULO DO LOWER BOUND
     public float calculateBtwTwoStores(float x1, float y1, float x2, float y2, List<Integer> caminho,
             List<Integer> valores) {
         float difX = x2 - x1;
@@ -144,12 +145,8 @@ public class BranchAndBound extends AlgorithmsBase {
         float litros;
 
         float distancia = (float) Math.sqrt(difX * difX + difY * difY);
-        litros = (float) (distancia / (10 - 0.5 * this.truck.getCargaAtual().size()));
-        if (caminho.size() + 1 < valores.size()) {
-            return litros * 1.4f;
-        } else {
-            return litros;
-        }
+        litros = (float) (distancia / (10 - 0.5 * this.truck.getCargaAtual().size()));        
+            return litros;       
     }
 
     // METODO PRINCIPAL DE BRANCH AND BOUND RESPONSAVEL PELAS PODAS
@@ -185,12 +182,12 @@ public class BranchAndBound extends AlgorithmsBase {
                 }
                 storeToGo = valores.get(i);
                 actualStore = caminho.get(caminho.size() - 1);
-                //Calculo do Lower Bound
+                // Calculo do Lower Bound
                 lowerBound = this.truck.getCombustivelGastoAtual()
                         + calculateBtwTwoStores(matrizCompleta.get(actualStore).get(1),
                                 matrizCompleta.get(actualStore).get(2), matrizCompleta.get(storeToGo).get(1),
                                 matrizCompleta.get(storeToGo).get(2), caminho, valores);
-                //CONDIÇÃO DE PODA POR MAIS PROMISSOR
+                // CONDIÇÃO DE PODA POR MAIS PROMISSOR
                 if (!(lowerBound < bestWay.getCombustivelGasto())) {
                     continue;
                 }
