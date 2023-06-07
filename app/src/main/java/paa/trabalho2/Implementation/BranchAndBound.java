@@ -118,6 +118,7 @@ public class BranchAndBound extends AlgorithmsBase {
         for (int i = 0; i < valores.size(); i++) {
             if (valores.get(i) == numeroInicial) {
                 List<Integer> caminho = new ArrayList<>();
+                //Colocando as informações iniciais do caminhão
                 this.truck.getCargas().add(new ArrayList<>());
                 this.truck.getCombustiveis().add(0.0f);
                 // atualizando o combustivel gasto atual do caminhão
@@ -129,7 +130,7 @@ public class BranchAndBound extends AlgorithmsBase {
                 changeMatrix(matrizCompleta, valores.get(i));
                 // atualizando a lista de cargas do caminhão
                 this.truck.getCargas().add(new ArrayList<>(this.truck.getCargaAtual()));
-                gerarCaminhos(valores, i, caminho, matrizCompleta, bestWay);
+                branchAndBound(valores, i, caminho, matrizCompleta, bestWay);
             }
         }
 
@@ -150,7 +151,7 @@ public class BranchAndBound extends AlgorithmsBase {
     }
 
     // METODO PRINCIPAL DE BRANCH AND BOUND RESPONSAVEL PELAS PODAS
-    public void gerarCaminhos(List<Integer> valores, int indice, List<Integer> caminho,
+    public void branchAndBound(List<Integer> valores, int indice, List<Integer> caminho,
             List<List<Integer>> matrizCompleta, BestWay bestWay) {
         int storeToGo;
         int actualStore;
@@ -193,7 +194,7 @@ public class BranchAndBound extends AlgorithmsBase {
                 }
                 // Fazendo copias antes da modificação da matriz
                 List<List<Integer>> copia = doCopyMatrix(matrizCompleta);
-                List<Integer> copiacam = new ArrayList<>(this.truck.getCargaAtual());
+                List<Integer> copyTruck = new ArrayList<>(this.truck.getCargaAtual());
                 float copiaCombustivel = this.truck.getCombustivelGastoAtual();
                 List<List<Integer>> copiaCargas = new ArrayList<>(this.truck.getCargas());
                 List<Float> copiaCombustiveis = new ArrayList<>(this.truck.getCombustiveis());
@@ -208,12 +209,12 @@ public class BranchAndBound extends AlgorithmsBase {
                 // Adicionando a loja ao caminho
                 caminho.add(valores.get(i));
                 // Chamando recursivamente a função
-                gerarCaminhos(valores, i, caminho, matrizCompleta, bestWay);
+                branchAndBound(valores, i, caminho, matrizCompleta, bestWay);
                 // Removendo a loja do caminho
                 caminho.remove(caminho.size() - 1);
                 // Removendo todos os efeitos da adição daquela loja no caminho
                 matrizCompleta = copia;
-                this.truck.setCargaAtual(new ArrayList<>(copiacam));
+                this.truck.setCargaAtual(new ArrayList<>(copyTruck));
                 this.truck.setCombustivelGastoAtual(copiaCombustivel);
                 this.truck.setCargas(copiaCargas);
                 this.truck.setCombustiveis(copiaCombustiveis);
@@ -237,7 +238,7 @@ public class BranchAndBound extends AlgorithmsBase {
     }
 
     // METODO INICIAL DO BRANCH AND BOUND
-    public BestWay branchAndBound(List<Integer> lojasToPass, List<List<Integer>> matrizPrincipal, BestWay bestWay) {
+    public BestWay beginFunction(List<Integer> lojasToPass, List<List<Integer>> matrizPrincipal, BestWay bestWay) {
         // Podando os nós de todas as lojas que inicialmente não podem ser visitadas
         List<Integer> lojasCantGo = getStoresWithoutPermissionToGo(matrizPrincipal);
         List<Integer> beginLojas = new ArrayList<>();
@@ -275,7 +276,7 @@ public class BranchAndBound extends AlgorithmsBase {
 
         long startTime = System.currentTimeMillis();
 
-        BestWay bestWay = this.branchAndBound(mandatoryStores, mainMatrix, best);
+        BestWay bestWay = this.beginFunction(mandatoryStores, mainMatrix, best);
 
         long endTime = System.currentTimeMillis();
         long totalTime = endTime - startTime;

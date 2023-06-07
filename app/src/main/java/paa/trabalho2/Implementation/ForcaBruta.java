@@ -74,7 +74,7 @@ public class ForcaBruta extends AlgorithmsBase {
 
     // METODO PARA RETORNAR AS LOJAS QUE O CAMINHÃO NÃO PODE PASSAR NO MOMENTO PARA
     // NÃO TER QUE PASSAR NOVAMENTE
-    public List<Integer> getLojasWithoutPermissionToGo(List<List<Integer>> stores) {
+    public List<Integer> getStoresWithoutPermissionToGo(List<List<Integer>> stores) {
         List<Integer> semPermissao = new ArrayList<>();
         for (List<Integer> store : stores) {
             List<Integer> destinos = getDestinos(store);
@@ -106,14 +106,14 @@ public class ForcaBruta extends AlgorithmsBase {
     }
 
     // METODO PARA RETORNAR SE O CAMINHAO PODE IR PARA A LOJA ESPECIFICADA
-    public boolean canIGoToThisLoja(List<List<Integer>> matriz, Integer store, Caminhao truck) {
-        return !getLojasWithoutPermissionToGo(matriz).contains(store)
+    public boolean canIGoToThisStore(List<List<Integer>> matriz, Integer store, Caminhao truck) {
+        return !getStoresWithoutPermissionToGo(matriz).contains(store)
                 && canTheTruckCarryMoreItems(matriz, store, truck);
     }
 
     // METODO PARA MUDAR A MATRIZ PARA SABER QUAIS LOJAS AGORA PODEM SER ACESSADAS E
     // PARA ENCHER A CARGA DO CAMINHÃO COM OS NOVOS PRODUTOS
-    public List<List<Integer>> changeMatriz(List<List<Integer>> matriz, Integer passei, Caminhao truck) {
+    public List<List<Integer>> changeMatrix(List<List<Integer>> matriz, Integer passei, Caminhao truck) {
         int tamMatriz = matriz.get(passei).size();
         if (truck.getCargaAtual().contains(passei)) {
             truck.getCargaAtual().remove(passei);
@@ -132,7 +132,7 @@ public class ForcaBruta extends AlgorithmsBase {
     // METODO PARA RETORNAR AS LOJAS QUE O CAMINHAO PRECISA PASSAR
     public List<Integer> mandatoryStores(List<List<Integer>> matrizCompleta) {
         List<Integer> lojasParaPassar = new ArrayList<>();
-        List<Integer> destinos = getLojasWithoutPermissionToGo(matrizCompleta);
+        List<Integer> destinos = getStoresWithoutPermissionToGo(matrizCompleta);
         for (int i = 1; i < matrizCompleta.size(); i++) {
             if (matrizCompleta.get(i).size() > 3 || destinos.contains(i)) {
                 lojasParaPassar.add(i);
@@ -155,7 +155,7 @@ public class ForcaBruta extends AlgorithmsBase {
     }
 
     // METODO PARA FAZER UMA COPIA DA MATRIZ ORIGINAL
-    public List<List<Integer>> fazerCopiaMatriz(List<List<Integer>> matrizOriginal) {
+    public List<List<Integer>> doCopyMatrix(List<List<Integer>> matrizOriginal) {
         List<List<Integer>> matrizCopia = new ArrayList<>();
 
         for (List<Integer> lista : matrizOriginal) {
@@ -170,7 +170,7 @@ public class ForcaBruta extends AlgorithmsBase {
             List<List<Integer>> matrizCompleta, Caminhao truck, BestWay bestWay) {
         if (caminho.size() == valores.size()) {
             // fazendo copia da matriz Original
-            List<List<Integer>> copiaMatrizCompleta = fazerCopiaMatriz(matrizCompleta);
+            List<List<Integer>> copiaMatrizCompleta = doCopyMatrix(matrizCompleta);
             tryCombinations(copiaMatrizCompleta, new ArrayList<>(caminho), truck, bestWay);
             // combinacoes.add(new ArrayList<>(caminho)); -> COLOCAR CODIGO PRA TESTAR TODOS
             // OS CAMINHOS
@@ -186,13 +186,13 @@ public class ForcaBruta extends AlgorithmsBase {
         }
     }
 
-    // METODO DE FORÇA BRUTA PARA TESTAR TODAS AS COMBINAÇÕES
+    // METODO DE FORÇA BRUTA PARA APENAS CALCULAR AS COMBINACOES VALIDAS
     public void tryCombinations(List<List<Integer>> copiaMatrizCompleta, List<Integer> combinacao,
             Caminhao truck, BestWay bestWay) {
-        List<List<Integer>> copia = fazerCopiaMatriz(copiaMatrizCompleta);
+        List<List<Integer>> copia = doCopyMatrix(copiaMatrizCompleta);
         for (Integer store : combinacao) {
-            if (canIGoToThisLoja(copiaMatrizCompleta, store, truck)) {
-                copiaMatrizCompleta = changeMatriz(copiaMatrizCompleta, store, truck);
+            if (canIGoToThisStore(copiaMatrizCompleta, store, truck)) {
+                copiaMatrizCompleta = changeMatrix(copiaMatrizCompleta, store, truck);
             } else {
                 truck.setCombustivelGastoAtual(0.0f);
                 truck.setCargaAtual(new ArrayList<>());
@@ -219,7 +219,7 @@ public class ForcaBruta extends AlgorithmsBase {
             coordinatesToGo[1] = copiaMatrizCompleta.get(store).get(2);
             calcularDistancias(currentCoordinates[0], currentCoordinates[1], coordinatesToGo[0], coordinatesToGo[1],
                     truck);
-            copiaMatrizCompleta = changeMatriz(copiaMatrizCompleta, store, truck);
+            copiaMatrizCompleta = changeMatrix(copiaMatrizCompleta, store, truck);
             combustivel.add(this.truck.getCombustivelGastoAtual());
             cargas.add(new ArrayList<>(this.truck.getCargaAtual()));
             currentCoordinates[0] = coordinatesToGo[0];
