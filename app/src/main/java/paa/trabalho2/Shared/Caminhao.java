@@ -1,3 +1,5 @@
+//Feito por:
+//Felipe Leal, Guilherme Dantas e Laura Iara
 package paa.trabalho2.Shared;
 
 import java.util.ArrayList;

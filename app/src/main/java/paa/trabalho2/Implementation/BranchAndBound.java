@@ -1,3 +1,5 @@
+//Feito por:
+//Felipe Leal, Guilherme Dantas e Laura Iara
 package paa.trabalho2.Implementation;
 
 import org.jfree.data.xy.XYDataset;
@@ -248,6 +250,7 @@ public class BranchAndBound extends AlgorithmsBase {
                     beginLojas.add(loja);
             }
         }
+
         for (Integer loja : beginLojas) {
             this.truck.setCargaAtual(new ArrayList<>());
             this.truck.setCombustivelGastoAtual(0.0f);

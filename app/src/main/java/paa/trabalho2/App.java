@@ -1,3 +1,6 @@
+//Feito por:
+//Felipe Leal, Guilherme Dantas e Laura Iara
+
 package paa.trabalho2;
 
 import paa.trabalho2.Implementation.BranchAndBound;

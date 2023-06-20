@@ -1,3 +1,6 @@
+//Feito por:
+//Felipe Leal, Guilherme Dantas e Laura Iara
+
 package paa.trabalho2.Implementation;
 
 import java.io.BufferedReader;
@@ -268,6 +271,7 @@ public class ForcaBruta extends AlgorithmsBase {
 
         long startTime = System.currentTimeMillis();
 
+    
         for (Integer store : mandatoryStores) {
             truck.setCargaAtual(new ArrayList<>());
             this.generateCombinations(mandatoryStores, store, mainMatrix, truck, bestWay);

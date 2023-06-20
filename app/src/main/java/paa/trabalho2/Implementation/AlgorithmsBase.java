@@ -1,3 +1,5 @@
+//Feito por:
+//Felipe Leal, Guilherme Dantas e Laura Iara
 package paa.trabalho2.Implementation;
 
 import org.jfree.chart.ChartFactory;
